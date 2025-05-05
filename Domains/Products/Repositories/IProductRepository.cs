@@ -8,4 +8,6 @@ public interface IProductRepository
     Product? GetById(int id);
     IEnumerable<Product> GetAllByPrice(double minPrice, double maxPrice);
     void Add(Product product);
+    void Update(Product product);
+    void Delete(Product product);
 }

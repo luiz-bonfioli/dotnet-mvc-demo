@@ -44,5 +44,23 @@ public class ProductsController(IProductService service) : ControllerBase
         return Ok(products);
     }
 
+    [HttpPut]
+    public IActionResult Update([FromBody] Product product)
+    {
+        var success = _service.Update(product);
+        if (!success) return NotFound();
+
+        return NoContent();
+    }
+
+    [HttpDelete]
+    public IActionResult Delete([FromBody] Product product)
+    {
+        var success = _service.Delete(product);
+        if (!success) return NotFound();
+
+        return NoContent();
+    }
+
 }
 

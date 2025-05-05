@@ -8,4 +8,6 @@ public interface IProductService
     Product? GetById(int id);
     IEnumerable<Product> GetAllByPrice(double minPrice, double maxPrice);
     void Add(Product product);
+    bool Update(Product product);
+    bool Delete(Product product);
 }

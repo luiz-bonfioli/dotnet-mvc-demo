@@ -42,4 +42,25 @@ public class ProductService(IProductRepository repository, ILogger<ProductServic
         _repository.Add(product);
         _logger.LogInformation("Added new product to database: {ProductName}", product.Name);
     }
+
+    public bool Update(Product product)
+    {
+        var existingProduct = _repository.GetById(product.Id);
+        if (existingProduct == null) return false;
+
+        existingProduct.Name = product.Name;
+        existingProduct.Price = product.Price;
+
+        _repository.Update(existingProduct);
+        return true;
+    }
+
+    public bool Delete(Product product)
+    {
+        var existingProduct = _repository.GetById(product.Id);
+        if (existingProduct == null) return false;
+
+        _repository.Delete(existingProduct);
+        return true;
+    }
 }

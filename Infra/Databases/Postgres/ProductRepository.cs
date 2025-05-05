@@ -33,4 +33,20 @@ public class ProductRepository(ISessionFactory sessionFactory) : IProductReposit
         session.Save(product);
         transaction.Commit();
     }
+
+    public void Update(Product product)
+    {
+        using var session = _sessionFactory.OpenSession();
+        using var transaction = session.BeginTransaction();
+        session.Update(product);
+        transaction.Commit();
+    }
+
+    public void Delete(Product product)
+    {
+        using var session = _sessionFactory.OpenSession();
+        using var transaction = session.BeginTransaction();
+        session.Delete(product);
+        transaction.Commit();
+    }
 }
