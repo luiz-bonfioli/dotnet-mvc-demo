@@ -14,53 +14,52 @@ public class ProductsController(IProductService service) : ControllerBase
     private readonly IProductService _service = service;
 
     [HttpGet]
-    public ActionResult<IEnumerable<Product>> GetAll() => Ok(_service.GetAll());
+    public async Task<ActionResult<IEnumerable<Product>>> GetAll()
+    {
+        var products = await _service.GetAll();
+        return Ok(products);
+    }
 
     [HttpGet("{id}")]
-    public ActionResult<Product> Get(int id)
+    public async Task<ActionResult<Product>> Get(int id)
     {
-        var product = _service.GetById(id);
+        var product = await _service.GetById(id);
         return product is null ? NotFound() : Ok(product);
     }
 
     [HttpPost]
-    public IActionResult Create(ProductDto dto)
+    public async Task<IActionResult> Create(ProductDto dto)
     {
         var product = new Product { Name = dto.Name, Price = dto.Price };
-        _service.Add(product);
+        await _service.Add(product);
         return CreatedAtAction(nameof(Get), new { id = product.Id }, product);
     }
 
     [HttpGet("by-price")]
-    public ActionResult<IEnumerable<Product>> GetAllByPrice([FromQuery] ProductPriceQueryParams query)
+    public async Task<ActionResult<IEnumerable<Product>>> GetAllByPrice([FromQuery] ProductPriceQueryParams query)
     {
-        // Validate model state (e.g., check if both minPrice and maxPrice are provided correctly)
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        // Call the service method to get all products by price range
-        var products = _service.GetAllByPrice(query.MinPrice ?? 0, query.MaxPrice ?? double.MaxValue);
-
+        var products = await _service.GetAllByPrice(query.MinPrice ?? 0, query.MaxPrice ?? double.MaxValue);
         return Ok(products);
     }
 
     [HttpPut]
-    public IActionResult Update([FromBody] Product product)
+    public async Task<IActionResult> Update([FromBody] Product product)
     {
-        var success = _service.Update(product);
+        var success = await _service.Update(product);
         if (!success) return NotFound();
 
         return NoContent();
     }
 
     [HttpDelete]
-    public IActionResult Delete([FromBody] Product product)
+    public async Task<IActionResult> Delete([FromBody] Product product)
     {
-        var success = _service.Delete(product);
+        var success = await _service.Delete(product);
         if (!success) return NotFound();
 
         return NoContent();
     }
-
 }
-

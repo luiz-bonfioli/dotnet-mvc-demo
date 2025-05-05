@@ -72,18 +72,10 @@ curl -X GET http://localhost:5185/api/v1/products \
 ### Get Product By ID
 
 ```bash
-curl -X GET http://localhost:5185/api/v1/products/{id}  \ 
-  -H "Authorization: Basic YWRtaW46c2VjcmV0"  \
+curl -X GET http://localhost:5185/api/v1/products/{id} \
+  -H "Authorization: Basic YWRtaW46c2VjcmV0" \
   -H "X-Tenant-Id: 330c1c10-0e36-47cb-b69b-985aec2af34a"
-```
-
-Example:
-
-```bash
-curl -X GET http://localhost:5185/api/v1/products/1  \ 
-  -H "Authorization: Basic YWRtaW46c2VjcmV0" \  
-  -H "X-Tenant-Id: 330c1c10-0e36-47cb-b69b-985aec2af34a"
-```
+  ```
 
 ### Get Products by Price Range
 

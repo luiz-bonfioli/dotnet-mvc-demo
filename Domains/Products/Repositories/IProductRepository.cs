@@ -4,10 +4,10 @@ namespace Demo.Domains.Products.Repositories;
 
 public interface IProductRepository
 {
-    IEnumerable<Product> GetAll();
-    Product? GetById(int id);
-    IEnumerable<Product> GetAllByPrice(double minPrice, double maxPrice);
-    void Add(Product product);
-    void Update(Product product);
-    void Delete(Product product);
+    Task<IEnumerable<Product>> GetAll();
+    Task<Product?> GetById(int id);
+    Task<IEnumerable<Product>> GetAllByPrice(double minPrice, double maxPrice);
+    Task Add(Product product);
+    Task Update(Product product);
+    Task Delete(Product product);
 }

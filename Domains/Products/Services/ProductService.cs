@@ -8,16 +8,16 @@ public class ProductService(IProductRepository repository, ILogger<ProductServic
     private readonly IProductRepository _repository = repository;
     private readonly ILogger<ProductService> _logger = logger;
 
-    public IEnumerable<Product> GetAll()
+    public async Task<IEnumerable<Product>> GetAll()
     {
-        var products = _repository.GetAll().ToList();
+        var products = (await _repository.GetAll()).ToList();
         _logger.LogInformation("Retrieved {Count} products from database.", products.Count);
         return products;
     }
 
-    public Product? GetById(int id)
+    public async Task<Product?> GetById(int id)
     {
-        var product = _repository.GetById(id);
+        var product = await _repository.GetById(id);
         if (product == null)
         {
             _logger.LogWarning("Product with ID {ProductId} not found.", id);
@@ -30,37 +30,39 @@ public class ProductService(IProductRepository repository, ILogger<ProductServic
         return product;
     }
 
-    public IEnumerable<Product> GetAllByPrice(double minPrice, double maxPrice)
-        {
-            var products = _repository.GetAllByPrice(minPrice, maxPrice).ToList();
-            _logger.LogInformation("Retrieved {Count} products with price between {MinPrice} and {MaxPrice}.", products.Count, minPrice, maxPrice);
-            return products;
-        }
-
-    public void Add(Product product)
+    public async Task<IEnumerable<Product>> GetAllByPrice(double minPrice, double maxPrice)
     {
-        _repository.Add(product);
+        var products = (await _repository.GetAllByPrice(minPrice, maxPrice)).ToList();
+        _logger.LogInformation("Retrieved {Count} products with price between {MinPrice} and {MaxPrice}.", products.Count, minPrice, maxPrice);
+        return products;
+    }
+
+    public async Task Add(Product product)
+    {
+        await _repository.Add(product);
         _logger.LogInformation("Added new product to database: {ProductName}", product.Name);
     }
 
-    public bool Update(Product product)
+    public async Task<bool> Update(Product product)
     {
-        var existingProduct = _repository.GetById(product.Id);
+        var existingProduct = await _repository.GetById(product.Id);
         if (existingProduct == null) return false;
 
         existingProduct.Name = product.Name;
         existingProduct.Price = product.Price;
 
-        _repository.Update(existingProduct);
+        await _repository.Update(existingProduct);
+        _logger.LogInformation("Updated product with ID {ProductId}.", product.Id);
         return true;
     }
 
-    public bool Delete(Product product)
+    public async Task<bool> Delete(Product product)
     {
-        var existingProduct = _repository.GetById(product.Id);
+        var existingProduct = await _repository.GetById(product.Id);
         if (existingProduct == null) return false;
 
-        _repository.Delete(existingProduct);
+        await _repository.Delete(existingProduct);
+        _logger.LogInformation("Deleted product with ID {ProductId}.", product.Id);
         return true;
     }
 }

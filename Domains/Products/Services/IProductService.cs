@@ -4,10 +4,10 @@ namespace Demo.Domains.Products.Services;
 
 public interface IProductService
 {
-    IEnumerable<Product> GetAll();
-    Product? GetById(int id);
-    IEnumerable<Product> GetAllByPrice(double minPrice, double maxPrice);
-    void Add(Product product);
-    bool Update(Product product);
-    bool Delete(Product product);
+    Task<IEnumerable<Product>> GetAll();
+    Task<Product?> GetById(int id);
+    Task<IEnumerable<Product>> GetAllByPrice(double minPrice, double maxPrice);
+    Task Add(Product product);
+    Task<bool> Update(Product product);
+    Task<bool> Delete(Product product);
 }

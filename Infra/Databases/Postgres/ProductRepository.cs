@@ -1,6 +1,7 @@
 using Demo.Domains.Products.Models;
 using Demo.Domains.Products.Repositories;
 using NHibernate;
+using NHibernate.Linq;
 
 namespace Demo.Infra.Databases.Postgres;
 
@@ -8,45 +9,47 @@ public class ProductRepository(ISessionFactory sessionFactory) : IProductReposit
 {
     private readonly ISessionFactory _sessionFactory = sessionFactory;
 
-    public IEnumerable<Product> GetAll()
+    public async Task<IEnumerable<Product>> GetAll()
     {
-        var session = _sessionFactory.OpenSession();
-        return session.Query<Product>().ToList();
+        using var session = _sessionFactory.OpenSession();
+        return await session.Query<Product>().ToListAsync();
     }
 
-    public Product? GetById(int id)
+    public async Task<Product?> GetById(int id)
     {
-        var session = _sessionFactory.OpenSession();
-        return session.Get<Product>(id);
+        using var session = _sessionFactory.OpenSession();
+        return await session.GetAsync<Product>(id);
     }
 
-    public IEnumerable<Product> GetAllByPrice(double minPrice, double maxPrice)
+    public async Task<IEnumerable<Product>> GetAllByPrice(double minPrice, double maxPrice)
     {
-        var session = _sessionFactory.OpenSession();
-        return [.. session.Query<Product>().Where(p => p.Price >= minPrice && p.Price <= maxPrice)];
+        using var session = _sessionFactory.OpenSession();
+        return await session.Query<Product>()
+            .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
+            .ToListAsync();
     }
 
-    public void Add(Product product)
-    {
-        var session = _sessionFactory.OpenSession();
-        var transaction = session.BeginTransaction();
-        session.Save(product);
-        transaction.Commit();
-    }
-
-    public void Update(Product product)
+    public async Task Add(Product product)
     {
         using var session = _sessionFactory.OpenSession();
         using var transaction = session.BeginTransaction();
-        session.Update(product);
-        transaction.Commit();
+        await session.SaveAsync(product);
+        await transaction.CommitAsync();
     }
 
-    public void Delete(Product product)
+    public async Task Update(Product product)
     {
         using var session = _sessionFactory.OpenSession();
         using var transaction = session.BeginTransaction();
-        session.Delete(product);
-        transaction.Commit();
+        await session.UpdateAsync(product);
+        await transaction.CommitAsync();
+    }
+
+    public async Task Delete(Product product)
+    {
+        using var session = _sessionFactory.OpenSession();
+        using var transaction = session.BeginTransaction();
+        await session.DeleteAsync(product);
+        await transaction.CommitAsync();
     }
 }
